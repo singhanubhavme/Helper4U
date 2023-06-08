@@ -20,6 +20,18 @@ const Form = () => {
     dob: Yup.string().required('DOB is required'),
     address: Yup.string().required('Address is required'),
   });
+
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      await axios.post(`${API_DOMAIN}/api/form/submit`, {
+        data: values,
+      });
+      showToast('Form Filled Success', 'success');
+      resetForm();
+    } catch (err) {
+      showToast('Can not submit form', 'fail');
+    }
+  };
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -31,18 +43,7 @@ const Form = () => {
     validationSchema: schema,
     validateOnChange: false,
     validateOnBlur: false,
-    onSubmit: (data) => {
-      (async () => {
-        try {
-          await axios.post(`${API_DOMAIN}/api/form/submit`, {
-            data,
-          });
-          showToast('Form Filled Success', 'success');
-        } catch (err) {
-          showToast('Can not submit form', 'fail');
-        }
-      })();
-    },
+    onSubmit: handleSubmit,
   });
 
   useEffect(() => {
